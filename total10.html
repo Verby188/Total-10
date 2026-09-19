@@ -2195,9 +2195,16 @@ function renderGame() {
   const board = document.getElementById('board');
   board.innerHTML = '';
   const boardClickable = canHumanAct() && G.phase === 'draw';
+  // Calculé une fois, réutilisé pour la carte vulnérable cliquable ET le bouton ci-dessous.
+  const humanEligibleToIntercept = G.vulnerableSlot !== null && (
+    (NET.mode === 'host' || NET.mode === 'guest')
+      ? canIntercept(G, NET.myIdx)
+      : G.players.some((p, i) => p.isHuman && canIntercept(G, i))
+  );
   G.board.forEach((slot, i) => {
     let el;
     const isVulnerable = G.vulnerableSlot !== null && i === G.vulnerableSlot;
+    const interceptClickable = isVulnerable && humanEligibleToIntercept;
     if (!slot.card) {
       el = document.createElement('div');
       el.className = 'card empty';
@@ -2206,9 +2213,10 @@ function renderGame() {
       el.className = 'card back' + (boardClickable ? ' clickable' : '');
       if (boardClickable) el.onclick = () => onSlotClick(i);
     } else {
-      el = cardEl(slot.card, { clickable: boardClickable });
+      el = cardEl(slot.card, { clickable: boardClickable || interceptClickable });
       if (boardClickable) el.onclick = () => onSlotClick(i);
     }
+    if (interceptClickable) el.onclick = onInterceptClick; // priorité à l'interception sur cette carte précise
     if (isVulnerable) el.classList.add('vulnerable');
     board.appendChild(el);
   });
@@ -2224,10 +2232,7 @@ function renderGame() {
     boardActions.appendChild(b);
   }
   if (G.vulnerableSlot !== null) {
-    const humanEligible = (NET.mode === 'host' || NET.mode === 'guest')
-      ? canIntercept(G, NET.myIdx)
-      : G.players.some((p, i) => p.isHuman && canIntercept(G, i));
-    if (humanEligible) {
+    if (humanEligibleToIntercept) {
       const b = document.createElement('button');
       b.className = 'btn-danger';
       b.textContent = '🖐️ Intercepter !';
