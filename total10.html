@@ -2076,7 +2076,11 @@ function renderLanguageGrid() {
   const grid = document.getElementById('lang-grid');
   if (!grid) return;
   if (typeof window.crGetLang !== 'function') { grid.innerHTML = '<div style="color:var(--muted);font-size:.8rem">cinqrois-i18n.js non chargé</div>'; return; }
-  const langs = { fr: 'Français', en: 'English', it: 'Italiano', es: 'Español', de: 'Deutsch', pt: 'Português', nl: 'Nederlands', pl: 'Polski' };
+  // Limité aux langues où le vocabulaire propre à Total 10 est réellement traduit
+  // (total10-i18n-extra.js / total10-rules-i18n.js). Le moteur cinqrois-i18n.js
+  // propose aussi nl/pl (venant de 5 Rois), mais les activer ici donnerait une
+  // appli à moitié en français tant que ces langues ne sont pas complétées.
+  const langs = { fr: 'Français', en: 'English', de: 'Deutsch', es: 'Español', it: 'Italiano', pt: 'Português' };
   const cur = window.crGetLang();
   grid.innerHTML = Object.entries(langs).map(([code, name]) =>
     `<button class="lang-btn${code === cur ? ' on' : ''}" onclick="window.crSetLang('${code}');renderLanguageGrid()">${name}</button>`
