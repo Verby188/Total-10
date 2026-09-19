@@ -17,6 +17,7 @@
   .btn-main{background:var(--gold);color:#20240a}
   .btn-main:disabled{opacity:.35;cursor:not-allowed}
   .btn-sec{background:var(--panel2);color:var(--text)}
+  .btn-sec.on{background:var(--gold);color:#20240a}
   .btn-danger{background:var(--danger);color:#fff}
   .screen{display:none;max-width:720px;margin:0 auto;padding:1rem}
   .screen.active{display:block}
@@ -110,6 +111,8 @@
   .card.vulnerable{outline:3px solid var(--danger);animation:pulse-vuln 1s ease-in-out infinite}
   @keyframes pulse-vuln{0%,100%{box-shadow:0 0 0 0 rgba(230,57,70,.6)}50%{box-shadow:0 0 0 8px rgba(230,57,70,0)}}
   .card .val{font-size:1.3em}
+  .card .cb-symbol{position:absolute;top:.15rem;left:.25rem;font-size:.55em;opacity:.85;line-height:1}
+  .card.small .cb-symbol{font-size:.5em}
   .card.small{font-size:.9rem}
 
   .panel-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0}
@@ -382,6 +385,10 @@
   <div class="settings-row">
     <span>Sons</span>
     <button class="btn-sec" id="sound-btn" onclick="toggleSound()">🔊</button>
+  </div>
+  <div class="settings-row">
+    <span>Motifs pour daltoniens</span>
+    <button class="btn-sec" id="colorblind-btn" onclick="toggleColorblindMode()">👁️</button>
   </div>
   <span class="field-label">Langue</span>
   <div class="lang-grid" id="lang-grid"></div>
@@ -2000,6 +2007,18 @@ function toggleSound() {
   const b = document.getElementById('sound-btn'); if (b) b.textContent = _soundEnabled ? '🔊' : '🔇';
 }
 
+// Symboles ajoutés sur chaque carte en plus de la couleur, pour rester lisible
+// en cas de daltonisme (rouge/vert notamment, la confusion la plus fréquente).
+const SUIT_SYMBOLS = { bleu: '●', rouge: '▲', vert: '■', orange: '◆', marine: '★' };
+let _colorblindMode = localStorage.getItem('total10_colorblind') === '1';
+
+function toggleColorblindMode() {
+  _colorblindMode = !_colorblindMode;
+  localStorage.setItem('total10_colorblind', _colorblindMode ? '1' : '0');
+  const b = document.getElementById('colorblind-btn'); if (b) b.classList.toggle('on', _colorblindMode);
+  if (G) renderGame(); // pour voir l'effet immédiatement sur une partie en cours
+}
+
 /* ── Sons synthétisés (Web Audio, aucun fichier requis) — repris de 5 Rois ── */
 let _audioCtx = null;
 function getAudioCtx() {
@@ -2098,7 +2117,11 @@ let coverPending = false; // vrai si on attend un tap "Voir mon jeu" avant de re
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if (id === 'settings-screen') { renderLanguageGrid(); const b = document.getElementById('sound-btn'); if (b) b.textContent = _soundEnabled ? '🔊' : '🔇'; }
+  if (id === 'settings-screen') {
+    renderLanguageGrid();
+    const b = document.getElementById('sound-btn'); if (b) b.textContent = _soundEnabled ? '🔊' : '🔇';
+    const cb = document.getElementById('colorblind-btn'); if (cb) cb.classList.toggle('on', _colorblindMode);
+  }
   if (id === 'leaderboard-screen') openLeaderboard();
 }
 
@@ -2171,7 +2194,8 @@ function onStartMatch() {
 function cardEl(card, { small = false, clickable = false, selected = false } = {}) {
   const d = document.createElement('div');
   d.className = `card suit-${card.suit}${small ? ' small' : ''}${clickable ? ' clickable' : ''}${selected ? ' selected' : ''}`;
-  d.innerHTML = `<span class="val">${card.val}</span>`;
+  const symbolHtml = _colorblindMode ? `<span class="cb-symbol">${SUIT_SYMBOLS[card.suit] || ''}</span>` : '';
+  d.innerHTML = `${symbolHtml}<span class="val">${card.val}</span>`;
   return d;
 }
 
