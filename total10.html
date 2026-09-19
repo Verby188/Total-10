@@ -76,6 +76,21 @@
   .bsm.gold{background:var(--gold);color:#20240a}
   #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:900;display:none}
   .settings-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel);padding:.7rem .9rem;border-radius:.6rem;margin-bottom:.5rem}
+
+  /* ── Configurateur de couleurs ── */
+  .cm-row-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.8rem 0 .35rem}
+  .cm-cards-row{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap}
+  .cmc-wrap{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+  .cmc{width:2.4rem;height:3.3rem;border-radius:.4rem;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:1.1rem;box-shadow:0 2px 6px rgba(0,0,0,.35);flex-shrink:0}
+  .cmc.marine{border:2px solid var(--gold)}
+  .cmc-lbl{font-size:.6rem;color:var(--muted);text-align:center}
+  .cmc-inp{width:2.4rem;height:1.5rem;border:1.5px solid var(--panel2);border-radius:.3rem;padding:1px;cursor:pointer;background:none}
+  .cm-presets{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.3rem}
+  .cm-preset-btn{padding:.3rem .65rem;border:1px solid var(--panel2);border-radius:.4rem;font-size:.68rem;
+    cursor:pointer;background:var(--panel2);color:var(--muted);transition:.15s}
+  .cm-preset-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .cm-actions{display:flex;gap:.5rem;margin-top:.9rem}
   .lang-grid{display:flex;flex-wrap:wrap;gap:.4rem}
   .lang-btn{background:var(--panel2);color:var(--text);padding:.4rem .7rem;border-radius:.5rem;font-size:.85rem}
   .lang-btn.on{background:var(--gold);color:#20240a}
@@ -390,8 +405,34 @@
     <span>Motifs pour daltoniens</span>
     <button class="btn-sec" id="colorblind-btn" onclick="toggleColorblindMode()">👁️</button>
   </div>
+  <div class="settings-row">
+    <span>Couleurs des cartes</span>
+    <button class="btn-sec" onclick="openColorModal()">🎨</button>
+  </div>
   <span class="field-label">Langue</span>
   <div class="lang-grid" id="lang-grid"></div>
+</div>
+
+<!-- ══ CONFIGURATEUR DE COULEURS ══ -->
+<div id="color-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width:400px">
+    <button class="modal-close" onclick="closeColorModal()">✕</button>
+    <div style="font-weight:700;margin-bottom:.7rem">🎨 Couleurs des cartes</div>
+
+    <div class="cm-row-lbl">Couleurs standard</div>
+    <div class="cm-cards-row" id="cm-ref-row"></div>
+
+    <div class="cm-row-lbl">Vos couleurs — appuyez pour modifier</div>
+    <div class="cm-cards-row" id="cm-custom-row"></div>
+
+    <div class="cm-row-lbl">Palettes prédéfinies</div>
+    <div class="cm-presets" id="cm-presets"></div>
+
+    <div class="cm-actions">
+      <button class="btn-sec" style="flex:1" onclick="resetCustomColors()">Réinitialiser</button>
+      <button class="btn-main" style="flex:1" onclick="saveAndApplyColors()">Enregistrer</button>
+    </div>
+  </div>
 </div>
 
 <canvas id="confetti-canvas"></canvas>
@@ -896,6 +937,7 @@ function translateAuthError(msg) {
 
 function skipAuth() {
   CUR_USER = null;
+  loadCustomColors();
   show('mode-select-screen');
 }
 
@@ -903,6 +945,7 @@ function onUserLoggedIn() {
   loadFriends();
   startOnlineStatusPolling();
   loadAvatar();
+  loadCustomColors();
   ensureProfileComplete();
   const badge = document.getElementById('lobby-profile');
   if (badge) { badge.style.display = 'flex'; document.getElementById('lobby-pseudo-lbl').textContent = CUR_USER.pseudo; }
@@ -2017,6 +2060,123 @@ function toggleColorblindMode() {
   localStorage.setItem('total10_colorblind', _colorblindMode ? '1' : '0');
   const b = document.getElementById('colorblind-btn'); if (b) b.classList.toggle('on', _colorblindMode);
   if (G) renderGame(); // pour voir l'effet immédiatement sur une partie en cours
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   COULEURS DES CARTES PERSONNALISABLES (comme dans 5 Rois)
+   Les couleurs par défaut sont les valeurs déjà utilisées ailleurs via
+   les variables CSS --c-bleu/--c-rouge/etc. Personnaliser revient à
+   réécrire ces variables sur :root — tout ce qui les référence (cartes
+   du plateau, de la main, des résultats) suit automatiquement, sans
+   toucher au reste du code.
+   ═══════════════════════════════════════════════════════════════════ */
+const CM_KEYS = ['bleu', 'rouge', 'vert', 'orange', 'marine'];
+const CM_LABELS = { bleu: 'Bleu', rouge: 'Rouge', vert: 'Vert', orange: 'Orange', marine: 'Marine (10)' };
+const DEFAULT_COLORS = { bleu: '#2f6fed', rouge: '#e63946', vert: '#2a9d5c', orange: '#f4a11e', marine: '#0b1f4d' };
+// Presets daltonisme (inspirés Okabe-Ito) utilisables comme point de départ — pas une vérité
+// absolue, chacun peut ensuite affiner couleur par couleur.
+const COLOR_PRESETS = {
+  normal: { label: 'Normal', ...DEFAULT_COLORS },
+  deut: { label: 'Deutéranopie', bleu: '#0072B2', rouge: '#D55E00', vert: '#009E73', orange: '#F0E442', marine: '#1a1a1a' },
+  trit: { label: 'Tritanopie', bleu: '#CC00AA', rouge: '#CC0000', vert: '#007744', orange: '#FF8800', marine: '#1a1a1a' },
+};
+let _customColors = Object.assign({}, DEFAULT_COLORS);
+let _editColors = {};
+
+function _mkColorPreviewCard(suit, color) {
+  const el = document.createElement('div');
+  el.className = 'cmc' + (suit === 'marine' ? ' marine' : '');
+  el.style.background = color;
+  el.textContent = _colorblindMode ? (SUIT_SYMBOLS[suit] || '5') : '5';
+  return el;
+}
+
+function openColorModal() {
+  _editColors = Object.assign({}, _customColors);
+  _renderColorModal();
+  document.getElementById('color-modal').classList.add('active');
+}
+function closeColorModal() {
+  document.getElementById('color-modal').classList.remove('active');
+}
+
+function _renderColorModal() {
+  const refRow = document.getElementById('cm-ref-row');
+  refRow.innerHTML = '';
+  CM_KEYS.forEach(key => {
+    const wrap = document.createElement('div'); wrap.className = 'cmc-wrap';
+    wrap.appendChild(_mkColorPreviewCard(key, DEFAULT_COLORS[key]));
+    const lbl = document.createElement('div'); lbl.className = 'cmc-lbl'; lbl.textContent = CM_LABELS[key];
+    wrap.appendChild(lbl);
+    refRow.appendChild(wrap);
+  });
+
+  const custRow = document.getElementById('cm-custom-row');
+  custRow.innerHTML = '';
+  CM_KEYS.forEach((key, idx) => {
+    const wrap = document.createElement('div'); wrap.className = 'cmc-wrap';
+    const preview = _mkColorPreviewCard(key, _editColors[key] || DEFAULT_COLORS[key]);
+    preview.id = 'cmc-preview-' + idx;
+    wrap.appendChild(preview);
+    const lbl = document.createElement('div'); lbl.className = 'cmc-lbl'; lbl.textContent = CM_LABELS[key];
+    const inp = document.createElement('input');
+    inp.type = 'color'; inp.className = 'cmc-inp';
+    inp.value = _editColors[key] || DEFAULT_COLORS[key];
+    inp.oninput = e => {
+      _editColors[key] = e.target.value;
+      const p = document.getElementById('cmc-preview-' + idx);
+      if (p) { const np = _mkColorPreviewCard(key, e.target.value); np.id = 'cmc-preview-' + idx; p.replaceWith(np); }
+    };
+    wrap.appendChild(lbl); wrap.appendChild(inp);
+    custRow.appendChild(wrap);
+  });
+
+  const presetsEl = document.getElementById('cm-presets');
+  presetsEl.innerHTML = '';
+  Object.values(COLOR_PRESETS).forEach(preset => {
+    const btn = document.createElement('button'); btn.className = 'cm-preset-btn';
+    btn.textContent = preset.label;
+    btn.onclick = () => { CM_KEYS.forEach(k => { if (preset[k]) _editColors[k] = preset[k]; }); _renderColorModal(); };
+    presetsEl.appendChild(btn);
+  });
+}
+
+function resetCustomColors() {
+  _editColors = Object.assign({}, DEFAULT_COLORS);
+  _renderColorModal();
+}
+
+async function saveAndApplyColors() {
+  _customColors = Object.assign({}, _editColors);
+  applyCustomColors();
+  closeColorModal();
+  if (G) renderGame();
+  localStorage.setItem('total10_customcolors', JSON.stringify(_customColors));
+  if (CUR_USER) {
+    try { await fbSet('users/' + CUR_USER.uid + '/settings/total10CardColors', _customColors); } catch (e) {}
+  }
+}
+
+function applyCustomColors() {
+  let styleEl = document.getElementById('custom-colors-style');
+  if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'custom-colors-style'; document.head.appendChild(styleEl); }
+  styleEl.textContent = `:root{${CM_KEYS.map(k => `--c-${k}:${_customColors[k] || DEFAULT_COLORS[k]}`).join(';')}}`;
+}
+
+async function loadCustomColors() {
+  if (CUR_USER) {
+    try {
+      const d = await fbGet('users/' + CUR_USER.uid + '/settings/total10CardColors');
+      if (d && typeof d === 'object' && d.bleu) {
+        _customColors = Object.assign({}, DEFAULT_COLORS, d);
+        applyCustomColors();
+        if (G) renderGame();
+        return;
+      }
+    } catch (e) {}
+  }
+  const stored = localStorage.getItem('total10_customcolors');
+  if (stored) { try { _customColors = Object.assign({}, DEFAULT_COLORS, JSON.parse(stored)); applyCustomColors(); } catch (e) {} }
 }
 
 /* ── Sons synthétisés (Web Audio, aucun fichier requis) — repris de 5 Rois ── */
