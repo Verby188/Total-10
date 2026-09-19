@@ -105,6 +105,14 @@
 
     // ── Réglages ──
     "Sons": { en: "Sounds", de: "Töne", es: "Sonidos" },
+    "Commencer la partie": { en: "Start the game", de: "Spiel starten", es: "Empezar la partida" },
+    "Nombre de joueurs": { en: "Number of players", de: "Anzahl der Spieler", es: "Número de jugadores" },
+    "cinqrois-i18n.js non chargé": { en: "cinqrois-i18n.js not loaded", de: "cinqrois-i18n.js nicht geladen", es: "cinqrois-i18n.js no cargado" },
+    "En ligne": { en: "Online", de: "Online", es: "En línea" },
+    "Hors ligne": { en: "Offline", de: "Offline", es: "Desconectado" },
+    "Inviter": { en: "Invite", de: "Einladen", es: "Invitar" },
+    "Invité ✓": { en: "Invited ✓", de: "Eingeladen ✓", es: "Invitado ✓" },
+    "TOTAL 10 !": { en: "TOTAL 10!", de: "TOTAL 10!", es: "¡TOTAL 10!" },
     "Langue": { en: "Language", de: "Sprache", es: "Idioma" },
 
     // ── Classement ──
