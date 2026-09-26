@@ -68,7 +68,7 @@
   .lb-row.me{outline:2px solid var(--gold)}
   .lb-rank{width:1.6rem;text-align:center;font-weight:800}
   .lb-av{font-size:1.3rem}
-  .lb-name{flex:1;font-size:.9rem}
+  .lb-name-wrap{flex:1;font-size:.9rem}
   .lb-stats{text-align:right}
   .lb-main{font-weight:700;font-size:.85rem}
   .lb-sub{font-size:.65rem;color:var(--muted)}
@@ -2064,7 +2064,7 @@ function renderLeaderboard(data) {
     row.innerHTML = `
       <div class="lb-rank">${medals[i] || (i + 1)}</div>
       <div class="lb-av">${e.avatar}</div>
-      <div class="lb-name">${e.pseudo}${isMe ? ' <span style="font-size:.6rem;color:var(--gold)">(toi)</span>' : ''}</div>
+      <div class="lb-name-wrap"><span class="lb-name">${e.pseudo}</span>${isMe ? ' <span style="font-size:.6rem;color:var(--gold)">(toi)</span>' : ''}</div>
       <div class="lb-stats">
         <div class="lb-main">${_lbSort === 'avg' ? e.avgScore + ' ' + crT('pts') + ' ' + crT('moy.') : _lbSort === 'pct' ? e.pct + '% ' + crT('victoires') : e.wins + ' ' + crT(e.wins > 1 ? 'victoires' : 'victoire')}</div>
         <div class="lb-sub">${e.games} ${crT(e.games > 1 ? 'parties' : 'partie')} · ${e.pct}% · ${crT('moy.')} ${e.avgScore}</div>
@@ -2130,10 +2130,10 @@ function launchConfetti(winColor) {
    cinqrois-i18n.js apporte le moteur (TreeWalker + MutationObserver +
    crT/crSetLang/crGetLang). Les termes de base de Total 10 (auth, lobby,
    amis, profil, réglages, salle d'attente, classement, boutons courants)
-   sont traduits en anglais/allemand/espagnol dans total10-i18n-extra.js,
-   chargé juste après. Les textes qui touchent aux RÈGLES DU JEU (écran de
-   règles, tutoriel, messages de journal décrivant les mécaniques) ne sont
-   pas encore traduits — Mathieu fournit ces traductions séparément.
+   sont traduits en anglais/allemand/espagnol/italien/portugais dans
+   total10-i18n-extra.js. Les textes des RÈGLES DU JEU (écran de règles)
+   sont dans total10-rules-i18n.js — les deux fichiers doivent être
+   chargés en balises <script> en fin de document, après cinqrois-i18n.js.
    ═══════════════════════════════════════════════════════════════════ */
 let _soundEnabled = localStorage.getItem('total10_sound') !== '0';
 
@@ -3004,12 +3004,11 @@ function onRestart() {
 setupChangeCount(0);
 tryRestoreSession();
 </script>
-<!-- Moteur i18n (mêmes conventions que 5 Rois/U9) — le dictionnaire embarqué dans
-     ce fichier est encore celui de 5 Rois ; un dictionnaire Total 10 reste à
-     écrire (voir la note dans le <script> principal, section SON + LANGUE). -->
+<!-- Moteur i18n (mêmes conventions que 5 Rois/U9). -->
 <script src="cinqrois-i18n.js"></script>
-<!-- Compléments de traduction propres à Total 10 (termes de base, pas les
-     règles du jeu — celles-ci arrivent séparément, déjà traduites). -->
+<!-- Compléments de traduction propres à Total 10 : termes de base d'abord,
+     puis les règles du jeu (consommées par l'écran de règles). -->
 <script src="total10-i18n-extra.js"></script>
+<script src="total10-rules-i18n.js"></script>
 </body>
 </html>
