@@ -105,6 +105,13 @@
     // ── Réglages ──
     "Sons": { en: "Sounds", de: "Töne", es: "Sonidos", it: "Suoni", pt: "Sons" },
     "Commencer la partie": { en: "Start the game", de: "Spiel starten", es: "Empezar la partida", it: "Inizia la partita", pt: "Começar a partida" },
+    "Comment jouer, interception, fin de partie": { en: "How to play, interception, end of game", de: "Spielablauf, Abfangen, Spielende", es: "Cómo jugar, intercepción, final de la partida", it: "Come giocare, intercetto, fine partita", pt: "Como jogar, interceção, fim de jogo" },
+    "📖 Règles du jeu": { en: "📖 Game rules", de: "📖 Spielregeln", es: "📖 Reglas del juego", it: "📖 Regole del gioco", pt: "📖 Regras do jogo" },
+    "C'est compris, jouons !": { en: "Got it, let's play!", de: "Verstanden, los geht's!", es: "Entendido, ¡a jugar!", it: "Capito, si gioca!", pt: "Percebido, vamos jogar!" },
+    "👋 Bienvenue sur Total 10 !": { en: "👋 Welcome to Total 10!", de: "👋 Willkommen bei Total 10!", es: "👋 ¡Bienvenido a Total 10!", it: "👋 Benvenuto su Total 10!", pt: "👋 Bem-vindo ao Total 10!" },
+    "Nouveau ici ? Un petit tour des règles avant de commencer ?": { en: "New here? A quick look at the rules before you start?", de: "Neu hier? Ein kurzer Blick auf die Regeln, bevor es losgeht?", es: "¿Nuevo por aquí? ¿Un vistazo rápido a las reglas antes de empezar?", it: "Nuovo qui? Uno sguardo veloce alle regole prima di iniziare?", pt: "Novo por aqui? Uma vista de olhos rápida às regras antes de começar?" },
+    "📖 Voir les règles": { en: "📖 See the rules", de: "📖 Regeln ansehen", es: "📖 Ver las reglas", it: "📖 Vedi le regole", pt: "📖 Ver as regras" },
+    "Plus tard": { en: "Later", de: "Später", es: "Más tarde", it: "Più tardi", pt: "Mais tarde" },
     "Nombre de joueurs": { en: "Number of players", de: "Anzahl der Spieler", es: "Número de jugadores", it: "Numero di giocatori", pt: "Número de jogadores" },
     "cinqrois-i18n.js non chargé": { en: "cinqrois-i18n.js not loaded", de: "cinqrois-i18n.js nicht geladen", es: "cinqrois-i18n.js no cargado", it: "cinqrois-i18n.js non caricato", pt: "cinqrois-i18n.js não carregado" },
     "En ligne": { en: "Online", de: "Online", es: "En línea", it: "Online", pt: "Online" },

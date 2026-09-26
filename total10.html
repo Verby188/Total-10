@@ -77,6 +77,15 @@
   #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:900;display:none}
   .settings-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel);padding:.7rem .9rem;border-radius:.6rem;margin-bottom:.5rem}
 
+  /* ── Écran des règles ── */
+  .rules-h3{color:var(--gold);font-size:1rem;margin:1.1rem 0 .4rem}
+  .rules-p{font-size:.88rem;line-height:1.55;color:var(--text);margin:.3rem 0}
+  .rules-list{font-size:.88rem;line-height:1.6;color:var(--text);margin:.3rem 0;padding-left:1.2rem}
+  .rules-list li{margin-bottom:.25rem}
+  .rules-combo-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin:.7rem 0 1rem;padding:.7rem;background:var(--panel);border-radius:.6rem}
+  .rules-combo{display:flex;align-items:center;gap:.25rem;font-weight:800;color:var(--muted)}
+  .card.rules-mini{width:1.9rem;height:2.6rem;font-size:.85rem;border-radius:.3rem}
+
   /* ── Configurateur de couleurs ── */
   .cm-row-lbl{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.8rem 0 .35rem}
   .cm-cards-row{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap}
@@ -195,11 +204,83 @@
     <span id="lobby-pseudo-lbl"></span>
   </div>
   <button class="mode-card" onclick="goLocalSetup()"><b>🎮 Jouer en local</b><span>Solo ou hotseat, avec IA — sur cet appareil</span></button>
+  <button class="mode-card" onclick="show('rules-screen')"><b>📖 Règles du jeu</b><span>Comment jouer, interception, fin de partie</span></button>
   <button class="mode-card" onclick="goCreateRoom()"><b>➕ Créer une partie</b><span>Héberge une partie en réseau, les autres rejoignent avec un code</span></button>
   <button class="mode-card" onclick="goJoinRoom()"><b>🔑 Rejoindre une partie</b><span>Entre le code donné par l'hôte</span></button>
   <button class="mode-card" id="friends-mode-btn" style="display:none" onclick="show('friends-screen')"><b>👥 Mes amis</b><span id="friends-mode-sub">Gérer votre liste d'amis</span></button>
   <button class="mode-card" onclick="show('leaderboard-screen')"><b>🏆 Classement global</b><span>Victoires, % de victoires, score moyen</span></button>
   <button class="mode-card" onclick="show('settings-screen')"><b>⚙️ Réglages</b><span>Langue, sons</span></button>
+</div>
+
+<!-- ══ RÈGLES DU JEU ══
+     Tout le texte ci-dessous est repris mot pour mot des clés françaises de
+     total10-rules-i18n.js — la traduction se fait automatiquement au
+     changement de langue, sans rien coder de plus ici. -->
+<div class="screen" id="rules-screen">
+  <button class="link-btn" style="text-align:left" onclick="show('mode-select-screen')">← Retour</button>
+  <h2>📖 Règles du jeu</h2>
+
+  <h3 class="rules-h3">But du jeu</h3>
+  <p class="rules-p">Être le premier à faire «TOTAL 10 !» en combinant ses 10 cartes avec des sommes de 10 dans différentes couleurs. Interdiction de répéter une somme de 10 dans la même couleur.</p>
+
+  <div class="rules-combo-row">
+    <div class="rules-combo"><div class="card rules-mini suit-rouge">8</div><span>+</span><div class="card rules-mini suit-rouge">2</div></div>
+    <div class="rules-combo"><div class="card rules-mini suit-vert">6</div><span>+</span><div class="card rules-mini suit-vert">4</div></div>
+    <div class="rules-combo"><div class="card rules-mini suit-bleu">5</div><span>+</span><div class="card rules-mini suit-bleu">2</div><span>+</span><div class="card rules-mini suit-bleu">3</div></div>
+    <div class="rules-combo"><div class="card rules-mini suit-orange">7</div><span>+</span><div class="card rules-mini suit-orange">3</div></div>
+  </div>
+
+  <h3 class="rules-h3">Contenu du jeu</h3>
+  <p class="rules-p">118 cartes : les couleurs Bleu, Rouge, Vert et Orange de 1 à 9, plus 2 cartes Marine « 10 ».</p>
+
+  <h3 class="rules-h3">On commence ?</h3>
+  <ul class="rules-list">
+    <li>10 cartes par joueur (vous pouvez les trier par couleur !)</li>
+    <li>12 cartes au milieu en 3 rangées de 4, face cachées.</li>
+    <li>Le reste du paquet est mis de côté.</li>
+    <li>Le joueur le plus jeune commence.</li>
+    <li>On joue chacun son tour dans le sens horaire.</li>
+  </ul>
+
+  <h3 class="rules-h3">À qui le tour ?</h3>
+  <ul class="rules-list">
+    <li>Pioche une carte parmi les 12 cartes du plateau (face cachée ou déjà révélée).</li>
+    <li>Défausse une carte de sa main, face visible, à la place de la carte prise. Le joueur doit toujours avoir exactement 10 cartes en main, avant et après son tour.</li>
+  </ul>
+
+  <h3 class="rules-h3">Balles neuves</h3>
+  <p class="rules-p">Si les 12 cartes du plateau sont toutes retournées, le joueur dont c'est le tour peut annoncer «Balles neuves». Les cartes du plateau sont alors retirées et remplacées par 12 nouvelles face cachée, disposées en 3 rangées de 4 cartes.</p>
+
+  <h3 class="rules-h3">Interception ! (à partir de 3 joueurs)</h3>
+  <p class="rules-p">Lorsqu'une carte est rejetée, les autres joueurs (mais jamais le joueur dont c'est le tour) peuvent tenter de l'intercepter.</p>
+  <p class="rules-p">Le premier joueur à toucher la carte rejetée peut l'échanger immédiatement avec une carte de sa main.</p>
+  <p class="rules-p">La carte ainsi rejetée peut à son tour être interceptée, etc.</p>
+  <p class="rules-p">Le jeu reprend ensuite avec le joueur dont c'était le tour de jouer.</p>
+  <p class="rules-p" style="font-weight:700;margin-top:.8rem">Règles d'interception :</p>
+  <p class="rules-p">Toucher, c'est jouer ! Une fois touchée, la carte interceptée doit obligatoirement être échangée avec une autre carte de sa main.</p>
+  <p class="rules-p">Égalité : si deux joueurs touchent en même temps, le joueur dont c'est le tour reprend la main.</p>
+
+  <h3 class="rules-h3">TOTAL 10 !</h3>
+  <p class="rules-p">À son tour et après avoir rejeté une carte, un joueur peut annoncer «TOTAL 10 !» et étaler ses 10 cartes.</p>
+  <p class="rules-p">Pour être valide, sa main doit être composée de sommes égales à 10, dans des couleurs différentes, sans répéter une combinaison dans la même couleur.</p>
+  <p class="rules-p">Si la combinaison est correcte, le joueur remporte immédiatement la manche.</p>
+  <p class="rules-p">Dans le cas contraire, il reprend ses cartes en main et la partie continue normalement.</p>
+
+  <h3 class="rules-h3">Comment ça se termine ?</h3>
+  <p class="rules-p">La partie se joue en 5 manches.</p>
+  <ul class="rules-list">
+    <li>Le joueur qui a annoncé «TOTAL 10» : marque 10 points.</li>
+    <li>Les autres joueurs marquent un score négatif égal au nombre de leurs cartes non combinées.</li>
+    <li>Le joueur gagnant commence toujours la manche suivante.</li>
+    <li>À la fin de la 5ème manche, le joueur ayant le plus de points remporte la partie.</li>
+  </ul>
+  <p class="rules-p" style="font-style:italic;margin-top:.6rem">Exemple :</p>
+  <ul class="rules-list">
+    <li>Le joueur A marque 10 points (il a fait TOTAL 10)</li>
+    <li>Le joueur B marque –4 points (il lui reste 4 cartes non combinées : 3 cartes bleues (5, 3 et 1) et une carte verte (1).</li>
+  </ul>
+
+  <button class="btn-main" style="width:100%;margin-top:1rem" onclick="show('mode-select-screen')">C'est compris, jouons !</button>
 </div>
 
 <!-- ══ CRÉER UNE PARTIE ══ -->
@@ -432,6 +513,16 @@
       <button class="btn-sec" style="flex:1" onclick="resetCustomColors()">Réinitialiser</button>
       <button class="btn-main" style="flex:1" onclick="saveAndApplyColors()">Enregistrer</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ ACCUEIL PREMIÈRE OUVERTURE ══ -->
+<div id="welcome-modal" class="modal-overlay">
+  <div class="modal-card">
+    <div style="font-weight:700;margin-bottom:.5rem">👋 Bienvenue sur Total 10 !</div>
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:.9rem">Nouveau ici ? Un petit tour des règles avant de commencer ?</p>
+    <button class="btn-main" style="width:100%;margin-bottom:.5rem" onclick="closeWelcomeModal(true)">📖 Voir les règles</button>
+    <button class="link-btn" onclick="closeWelcomeModal(false)">Plus tard</button>
   </div>
 </div>
 
@@ -939,6 +1030,7 @@ function skipAuth() {
   CUR_USER = null;
   loadCustomColors();
   show('mode-select-screen');
+  maybeShowWelcome();
 }
 
 function onUserLoggedIn() {
@@ -952,6 +1044,7 @@ function onUserLoggedIn() {
   const hostInp = document.getElementById('host-name'); if (hostInp) hostInp.value = CUR_USER.pseudo;
   const joinInp = document.getElementById('join-name'); if (joinInp) joinInp.value = CUR_USER.pseudo;
   show('mode-select-screen');
+  maybeShowWelcome();
 }
 
 /** Restaure la session depuis le stockage local (évite de se reconnecter à chaque ouverture). */
@@ -2283,6 +2376,18 @@ function show(id) {
     const cb = document.getElementById('colorblind-btn'); if (cb) cb.classList.toggle('on', _colorblindMode);
   }
   if (id === 'leaderboard-screen') openLeaderboard();
+  if (id === 'rules-screen') localStorage.setItem('total10_rules_seen', '1');
+}
+
+/** Invite (une seule fois) les nouveaux joueurs à consulter les règles avant de commencer. */
+function maybeShowWelcome() {
+  if (localStorage.getItem('total10_rules_seen')) return;
+  document.getElementById('welcome-modal').classList.add('active');
+}
+function closeWelcomeModal(goToRules) {
+  localStorage.setItem('total10_rules_seen', '1');
+  document.getElementById('welcome-modal').classList.remove('active');
+  if (goToRules) show('rules-screen');
 }
 
 function logMsg(t) {
