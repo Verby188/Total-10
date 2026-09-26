@@ -143,6 +143,17 @@
 
     // ── Hotseat local ──
     "👁️ Voir mon jeu": { en: "👁️ See my hand", de: "👁️ Meine Karten ansehen", es: "👁️ Ver mi mano", it: "👁️ Guarda le mie carte", pt: "👁️ Ver a minha mão" },
+
+    // ── Fragments pour messages construits dynamiquement (via crT(), pas le TreeWalker) ──
+    "Ta position :": { en: "Your rank:", de: "Deine Position:", es: "Tu posición:", it: "La tua posizione:", pt: "A tua posição:" },
+    "Main de": { en: "Hand of", de: "Hand von", es: "Mano de", it: "Mano di", pt: "Mão de" },
+    "réfléchit… 🤖": { en: "thinking… 🤖", de: "überlegt… 🤖", es: "pensando… 🤖", it: "sta pensando… 🤖", pt: "a pensar… 🤖" },
+    "joue…": { en: "is playing…", de: "spielt…", es: "está jugando…", it: "sta giocando…", pt: "está a jogar…" },
+    "La main n'est pas valide": { en: "The hand is not valid", de: "Die Hand ist nicht gültig", es: "La mano no es válida", it: "La mano non è valida", pt: "A mão não é válida" },
+    "carte(s) non combinée(s)": { en: "uncombined card(s)", de: "unkombinierte Karte(n)", es: "carta(s) no combinada(s)", it: "carta(e) non combinata(e)", pt: "carta(s) não combinada(s)" },
+    "intercepte — choisissez une carte à échanger": { en: "is intercepting — choose a card to swap", de: "fängt ab — wähle eine Karte zum Tauschen", es: "está interceptando — elige una carta para intercambiar", it: "sta intercettando — scegli una carta da scambiare", pt: "está a intercetar — escolhe uma carta para trocar" },
+    "piochez une carte du plateau": { en: "draw a card from the board", de: "ziehe eine Karte vom Tisch", es: "roba una carta de la mesa", it: "pesca una carta dal tavolo", pt: "compra uma carta da mesa" },
+    "Au tour de": { en: "It's the turn of", de: "Am Zug ist", es: "Le toca a", it: "È il turno di", pt: "É a vez de" },
     "C'est votre tour — les autres joueurs ne doivent pas regarder l'écran.": { en: "It's your turn — other players shouldn't look at the screen.", de: "Du bist dran — die anderen Spieler sollten nicht auf den Bildschirm schauen.", es: "Es tu turno — los demás jugadores no deben mirar la pantalla.", it: "È il tuo turno — gli altri giocatori non devono guardare lo schermo.", pt: "É a tua vez — os outros jogadores não devem olhar para o ecrã." },
 
     // ── Actions de jeu simples (pas des explications de règles) ──

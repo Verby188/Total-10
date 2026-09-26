@@ -1854,7 +1854,7 @@ function showProfile() {
         const rank = me ? h.players.filter(p => p.score >= me.score).length : '-';
         const date = new Date(h.date).toLocaleDateString();
         return `<div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px solid var(--panel2)">
-          <span>${date}</span><span>${me ? me.score + ' pts' : '—'}</span>
+          <span>${date}</span><span>${me ? me.score + ' ' + crT('pts') : '—'}</span>
           <span style="color:${rank === 1 ? 'var(--gold)' : 'var(--muted)'}">${rank === 1 ? '🥇' : rank + 'e'}</span>
         </div>`;
       }).join('');
@@ -2066,8 +2066,8 @@ function renderLeaderboard(data) {
       <div class="lb-av">${e.avatar}</div>
       <div class="lb-name">${e.pseudo}${isMe ? ' <span style="font-size:.6rem;color:var(--gold)">(toi)</span>' : ''}</div>
       <div class="lb-stats">
-        <div class="lb-main">${_lbSort === 'avg' ? e.avgScore + ' pts moy.' : _lbSort === 'pct' ? e.pct + '% victoires' : e.wins + ' victoire' + (e.wins > 1 ? 's' : '')}</div>
-        <div class="lb-sub">${e.games} partie${e.games > 1 ? 's' : ''} · ${e.pct}% · moy. ${e.avgScore}</div>
+        <div class="lb-main">${_lbSort === 'avg' ? e.avgScore + ' ' + crT('pts') + ' ' + crT('moy.') : _lbSort === 'pct' ? e.pct + '% ' + crT('victoires') : e.wins + ' ' + crT(e.wins > 1 ? 'victoires' : 'victoire')}</div>
+        <div class="lb-sub">${e.games} ${crT(e.games > 1 ? 'parties' : 'partie')} · ${e.pct}% · ${crT('moy.')} ${e.avgScore}</div>
       </div>`;
     list.appendChild(row);
   });
@@ -2078,7 +2078,7 @@ function renderLeaderboard(data) {
     if (myIdx >= 0) {
       myRankEl.style.display = 'block';
       const me = entries[myIdx];
-      myRankEl.textContent = `Ta position : #${myIdx + 1} — ${me.wins} victoire${me.wins > 1 ? 's' : ''} · ${me.pct}% · moy. ${me.avgScore} pts`;
+      myRankEl.textContent = `${crT('Ta position :')} #${myIdx + 1} — ${me.wins} ${crT(me.wins > 1 ? 'victoires' : 'victoire')} · ${me.pct}% · ${crT('moy.')} ${me.avgScore} ${crT('pts')}`;
     } else {
       myRankEl.style.display = 'block';
       myRankEl.textContent = "Tu n'apparais pas encore dans le classement";
@@ -2548,15 +2548,15 @@ function renderGame() {
     // intercepteur dont l'échange vient de compléter sa main.
     const p = G.players[G.declarant];
     if (isMySeat(G.declarant)) {
-      handLabel.textContent = `Main de ${p.name} (${p.hand.length} cartes)`;
+      handLabel.textContent = `${crT('Main de')} ${p.name} (${p.hand.length} ${crT('cartes')})`;
       p.hand.forEach(c => handCards.appendChild(cardEl(c, {})));
       const bTotal = document.createElement('button');
       bTotal.className = 'btn-main';
-      bTotal.textContent = 'TOTAL 10 !';
+      bTotal.textContent = crT('TOTAL 10 !');
       bTotal.onclick = onDeclareClick;
       const bPass = document.createElement('button');
       bPass.className = 'btn-sec';
-      bPass.textContent = 'Passer';
+      bPass.textContent = crT('Passer');
       bPass.onclick = onPassClick;
       handActions.appendChild(bTotal);
       handActions.appendChild(bPass);
@@ -2565,15 +2565,15 @@ function renderGame() {
       if (myIdx !== null && myIdx !== G.declarant) {
         const sp = G.players[myIdx];
         sp.hand.forEach(c => handCards.appendChild(cardEl(c, {})));
-        handLabel.textContent = `Main de ${sp.name} (${sp.hand.length} cartes) — ${p.name} réfléchit… 🤖`;
+        handLabel.textContent = `${crT('Main de')} ${sp.name} (${sp.hand.length} ${crT('cartes')}) — ${p.name} ${crT('réfléchit… 🤖')}`;
       } else {
-        handLabel.textContent = `${p.name} réfléchit… 🤖`;
+        handLabel.textContent = `${p.name} ${crT('réfléchit… 🤖')}`;
       }
     }
   } else if (G.phase === 'interceptSwap' && G.intercepting !== null && isMySeat(G.intercepting)) {
     // Un humain vient de toucher la carte : "toucher, c'est jouer" — l'échange est obligatoire.
     const p = G.players[G.intercepting];
-    handLabel.textContent = `${p.name} intercepte — choisissez une carte à échanger`;
+    handLabel.textContent = `${p.name} ${crT('intercepte — choisissez une carte à échanger')}`;
     p.hand.forEach(c => {
       const el = cardEl(c, { clickable: true, selected: selCard === c.id });
       el.onclick = () => { selCard = (selCard === c.id ? null : c.id); renderGame(); };
@@ -2581,13 +2581,13 @@ function renderGame() {
     });
     const b = document.createElement('button');
     b.className = 'btn-main';
-    b.textContent = 'Échanger';
+    b.textContent = crT('Échanger');
     b.disabled = selCard === null;
     b.onclick = onSwapConfirm;
     handActions.appendChild(b);
   } else if (canHumanAct()) {
     const p = G.players[G.cur];
-    handLabel.textContent = `Main de ${p.name} (${p.hand.length} cartes)`;
+    handLabel.textContent = `${crT('Main de')} ${p.name} (${p.hand.length} ${crT('cartes')})`;
     p.hand.forEach(c => {
       const el = cardEl(c, { clickable: G.phase === 'discard', selected: selCard === c.id });
       if (G.phase === 'discard') el.onclick = () => { selCard = (selCard === c.id ? null : c.id); renderGame(); };
@@ -2600,12 +2600,12 @@ function renderGame() {
       const willWin = selCard !== null && isFullyCombined(p.hand.filter(c => c.id !== selCard));
       const b = document.createElement('button');
       b.className = 'btn-main';
-      b.textContent = willWin ? 'TOTAL 10 !' : 'Défausser';
+      b.textContent = willWin ? crT('TOTAL 10 !') : crT('Défausser');
       b.disabled = selCard === null;
       b.onclick = willWin ? onDiscardAndDeclareClick : onDiscardClick;
       handActions.appendChild(b);
     } else {
-      handLabel.textContent += ' — piochez une carte du plateau';
+      handLabel.textContent += ` — ${crT('piochez une carte du plateau')}`;
     }
   } else {
     // Tour d'un autre joueur (IA en général). Là encore, avec un seul humain sur la
@@ -2615,9 +2615,9 @@ function renderGame() {
     if (myIdx !== null) {
       const p = G.players[myIdx];
       p.hand.forEach(c => handCards.appendChild(cardEl(c, {})));
-      handLabel.textContent = `Main de ${p.name} (${p.hand.length} cartes) — ${G.players[G.cur].name} joue…`;
+      handLabel.textContent = `${crT('Main de')} ${p.name} (${p.hand.length} ${crT('cartes')}) — ${G.players[G.cur].name} ${crT('joue…')}`;
     } else {
-      handLabel.textContent = G.players[G.cur].isHuman ? `Au tour de ${G.players[G.cur].name}…` : `${G.players[G.cur].name} réfléchit… 🤖`;
+      handLabel.textContent = G.players[G.cur].isHuman ? `${crT('Au tour de')} ${G.players[G.cur].name}…` : `${G.players[G.cur].name} ${crT('réfléchit… 🤖')}`;
     }
   }
 }
@@ -2685,7 +2685,7 @@ function onDeclareClick() {
   if (r.success) {
     handleRoundEnd(r.winnerIdx);
   } else {
-    logMsg(`❌ La main n'est pas valide (${r.leftover.length} carte(s) non combinée(s)).`);
+    logMsg(`❌ ${crT("La main n'est pas valide")} (${r.leftover.length} ${crT('carte(s) non combinée(s)')}).`);
     afterDeclineContinue();
   }
 }
@@ -2920,7 +2920,7 @@ function renderRoundEndResults(res) {
 
     const header = document.createElement('div');
     header.className = 'result-header';
-    header.innerHTML = `<span>${p.name}</span><span class="${r.delta >= 0 ? 'delta-pos' : 'delta-neg'}">${r.delta >= 0 ? '+' : ''}${r.delta} pts${r.leftover.length ? ` (${r.leftover.length} carte(s) non combinée(s))` : ''}</span>`;
+    header.innerHTML = `<span>${p.name}</span><span class="${r.delta >= 0 ? 'delta-pos' : 'delta-neg'}">${r.delta >= 0 ? '+' : ''}${r.delta} ${crT('pts')}${r.leftover.length ? ` (${r.leftover.length} ${crT('carte(s) non combinée(s)')})` : ''}</span>`;
     row.appendChild(header);
 
     const handRow = document.createElement('div');
@@ -2953,7 +2953,7 @@ function renderMatchEndResults() {
     const row = document.createElement('div');
     const isWinner = winners.includes(p);
     row.className = 'result-row' + (isWinner ? ' winner' : '');
-    row.innerHTML = `<span>${isWinner ? '👑 ' : ''}${p.name}</span><span>${p.score} pts</span>`;
+    row.innerHTML = `<span>${isWinner ? '👑 ' : ''}${p.name}</span><span>${p.score} ${crT('pts')}</span>`;
     box.appendChild(row);
   });
   if (!G._historySaved) {
