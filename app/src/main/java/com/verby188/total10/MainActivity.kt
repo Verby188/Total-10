@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -169,6 +170,17 @@ class MainActivity : AppCompatActivity() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
+            // La bannière ne prend sa taille RÉELLE qu'une fois chargée (asynchrone) — sans
+            // ce forçage, le WebView (poids=1 dans le LinearLayout) peut avoir déjà rendu sa
+            // page en supposant plus de hauteur disponible, et le bas du contenu (boutons
+            // d'action) se retrouve alors caché derrière la bannière une fois celle-ci affichée.
+            adListener = object : AdListener() {
+                override fun onAdLoaded() {
+                    layout.requestLayout()
+                    webView.requestLayout()
+                    webView.invalidate()
+                }
+            }
         }
 
         layout.addView(webView)
