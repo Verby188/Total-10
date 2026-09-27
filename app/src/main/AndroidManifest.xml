@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.verby188.total10">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Android 13+ : demandée explicitement à l'exécution dans MainActivity.onCreate -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="Total 10"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+        android:usesCleartextTraffic="false">
+
+        <!-- TODO : remplacer par le vrai ID d'application AdMob une fois créé dans la
+             console (Total 10 → Paramètres de l'appli → ID de l'application). Celui-ci
+             est l'ID de test générique fourni par Google, comme les unités publicitaires
+             de test déjà utilisées dans MainActivity.kt. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Lien profond total10://join/CODE (invitation partagée par SMS, etc.) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="total10" android:host="join" />
+            </intent-filter>
+
+            <!-- Repli web (ex: https://.../join?code=XXXXXX) — nécessite un fichier
+                 assetlinks.json hébergé sur le domaine si tu veux la vérification
+                 automatique des App Links ; sans lui, Android proposera un choix
+                 d'application à l'ouverture du lien, ce qui reste fonctionnel. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="verby188.github.io" />
+            </intent-filter>
+        </activity>
+
+        <!-- Service FCM (voir MyFirebaseMessagingService.kt) : jetons + messages de données -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>
